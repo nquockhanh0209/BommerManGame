@@ -1,3 +1,4 @@
+import control.Control;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -37,6 +38,7 @@ public class BombermanGame extends Application {
 
         // Tao scene
         Scene scene = new Scene(root);
+        Control input = new Control(scene);
 
         // Them scene vao stage
         stage.setScene(scene);
@@ -53,7 +55,7 @@ public class BombermanGame extends Application {
 
         createMap();
 
-        Entity bomberman = new Bomber(1, 1, Sprite.player_right.getFxImage());
+        Entity bomberman = new Bomber(1, 1, Sprite.player_right.getFxImage(), input);
         entities.add(bomberman);
     }
 
