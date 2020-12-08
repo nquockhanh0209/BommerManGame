@@ -7,7 +7,7 @@ import oop.graphics.Sprite;
 
 public class Brick extends Entity{
     private Sprite[] brickexplode = {Sprite.brick, Sprite.brick_exploded, Sprite.brick_exploded1, Sprite.brick_exploded2};
-    private Animation ani = new Animation(brickexplode, 6);
+    private Animation ani = new Animation(brickexplode, 8);
     public boolean isDestroy = false;
     public Brick(int x, int y, Image img) {
         super(x, y, img);
@@ -21,15 +21,13 @@ public class Brick extends Entity{
             }
         }
         else {
-            Game.bricks.remove(this);
+            this.img = Sprite.grass.getFxImage();
         }
-
     }
     @Override
     public boolean collide(Entity e){
         return false;
     }
-
     public boolean isDestroyed() {
         return this.isDestroy;
     }
