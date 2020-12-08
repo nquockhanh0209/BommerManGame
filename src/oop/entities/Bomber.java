@@ -16,11 +16,14 @@ public class Bomber extends Entity {
     private final Sprite[] frameright = {Sprite.player_right, Sprite.player_right_1, Sprite.player_right_2};
     private final Sprite[] frameup = {Sprite.player_up, Sprite.player_up_1, Sprite.player_up_2};
     private final Sprite[] framedown = {Sprite.player_down, Sprite.player_down_1, Sprite.player_down_2};
+    private final Sprite[] dead = {Sprite.player_dead1, Sprite.player_dead2, Sprite.player_dead3};
     private boolean isMoving = false;
     private double speed = 2;
     private int pad;
     private int dir = 0;
+    public boolean isDestroy = false;
     public Animation ani = new Animation(frameleft, 3);
+    public Animation aniDead = new Animation(dead, 20);
     public Control control;
     public Bomber(int x, int y, Image img, Control control) {
         super( x, y, img);
@@ -57,6 +60,7 @@ public class Bomber extends Entity {
             if(e instanceof Wall) {
                 if(this.collide(e)) {
                     if(dir == Control.MOVE_W || dir == Control.MOVE_A) {
+                        //x+=1;
                         pad = 1;
                     }
                     else if(dir == Control.MOVE_D || dir == Control.MOVE_S) {
@@ -67,7 +71,7 @@ public class Bomber extends Entity {
         }
         for(Entity e : Game.bricks){
             if(e instanceof Brick) {
-                if(this.collide(e)) {
+                if(this.collide(e) && !((Brick) e).isDestroy) {
                     if(dir == Control.MOVE_W || dir == Control.MOVE_A) {
                         pad = 1;
                     }
@@ -126,6 +130,20 @@ public class Bomber extends Entity {
                 }
             }
         }
+        for (int i = 0; i < Game.bombs.size(); i++) {
+            if (this.collide(Game.bombs.get(i))) {
+                if(((Bomb)Game.bombs.get(i)).awayFromb){
+                    if (dir == Control.MOVE_W || dir == Control.MOVE_A) {
+                        pad = 1;
+                    } else if (dir == Control.MOVE_D || dir == Control.MOVE_S) {
+                        pad = -1;
+                    }
+                }
+            }
+            else {
+                ((Bomb)Game.bombs.get(i)).awayFromb = true;
+            }
+        }
         if(pad != 0) {
             isMoving = true;
         }
@@ -145,8 +163,17 @@ public class Bomber extends Entity {
 
     @Override
     public void update() {
-        if(isMoving) ani.update();
-        this.img = ani.getFrame().getFxImage();
-        move();
+        if(isDestroy) {
+            aniDead.update();
+            this.img = aniDead.getFrame().getFxImage();
+            if(aniDead.aniDone()){
+                Game.entities.remove(this);
+            }
+        }
+        else {
+            if(isMoving) ani.update();
+            this.img = ani.getFrame().getFxImage();
+            move();
+        }
     }
 }
